@@ -1,923 +1,671 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>KIỂM KÊ CUỐI THÁNG HN</title>
-
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 <style>
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    font-family:Arial,sans-serif;
-    background:
-        radial-gradient(circle at top left,#1e293b,#0f172a 60%);
-    min-height:100vh;
-    padding:18px;
-    color:white;
+  font-family:Arial,sans-serif;
+  background:radial-gradient(circle at top left,#1e293b,#0f172a 60%);
+  min-height:100vh;padding:18px;color:white;
 }
 
 .container{
-    max-width:650px;
-    margin:auto;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(15px);
-    border:1px solid rgba(255,255,255,0.15);
-    border-radius:28px;
-    padding:22px;
-    box-shadow:
-        0 20px 40px rgba(0,0,0,0.45),
-        inset 0 1px 0 rgba(255,255,255,0.1);
+  max-width:650px;margin:auto;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(15px);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:28px;padding:22px;
+  box-shadow:0 20px 40px rgba(0,0,0,0.45),inset 0 1px 0 rgba(255,255,255,0.1);
 }
 
 h2{
-    text-align:center;
-    font-size:28px;
-    margin-bottom:20px;
-    font-weight:900;
-    letter-spacing:1px;
-    color:#fff;
-    text-shadow:0 4px 15px rgba(0,0,0,0.4);
+  text-align:center;font-size:26px;margin-bottom:20px;
+  font-weight:900;letter-spacing:1px;color:#fff;
+  text-shadow:0 4px 15px rgba(0,0,0,0.4);
 }
 
-/* INPUT */
-
-.input-group{
-    margin-bottom:14px;
+/* SECTION LABELS */
+.section-label{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;
+  color:#94a3b8;text-transform:uppercase;
+  margin:18px 0 8px 4px;
 }
 
-.input-group input{
-    width:100%;
-    padding:16px 18px;
-    border:none;
-    border-radius:18px;
-    background:rgba(255,255,255,0.12);
-    color:white;
-    font-size:16px;
-    outline:none;
-    transition:0.25s;
+/* INPUT GROUP */
+.input-group{margin-bottom:12px;}
 
-    box-shadow:
-        inset 3px 3px 8px rgba(0,0,0,0.3),
-        inset -2px -2px 5px rgba(255,255,255,0.08);
+.input-group input,
+.input-group select,
+.input-group textarea{
+  width:100%;padding:14px 16px;border:none;border-radius:16px;
+  background:rgba(255,255,255,0.12);color:white;font-size:15px;
+  outline:none;transition:0.25s;
+  box-shadow:inset 3px 3px 8px rgba(0,0,0,0.3),inset -2px -2px 5px rgba(255,255,255,0.08);
+  -webkit-appearance:none;appearance:none;
 }
 
-.input-group input:focus{
-    transform:translateY(-1px);
+.input-group select option{background:#1e293b;color:white;}
 
-    box-shadow:
-        0 0 0 3px rgba(59,130,246,0.35),
-        inset 3px 3px 8px rgba(0,0,0,0.3);
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus{
+  transform:translateY(-1px);
+  box-shadow:0 0 0 3px rgba(59,130,246,0.35),inset 3px 3px 8px rgba(0,0,0,0.3);
 }
 
-.input-group input::placeholder{
-    color:#d1d5db;
+.input-group input::placeholder,
+.input-group textarea::placeholder{color:#9ca3af;}
+
+/* INPUT WITH CAMERA ICON */
+.input-with-cam{position:relative;}
+.input-with-cam input{padding-right:52px;}
+.cam-btn{
+  position:absolute;right:10px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:22px;
+  padding:4px;box-shadow:none;color:#93c5fd;
+  transition:0.2s;
+}
+.cam-btn:hover{transform:translateY(-50%) scale(1.15);box-shadow:none;}
+.cam-btn:active{transform:translateY(-50%) scale(0.95);box-shadow:none;}
+
+/* SELECT ROW */
+.select-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+
+/* RADIO STATUS */
+.radio-group{display:flex;gap:12px;margin-bottom:12px;}
+.radio-label{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px;border-radius:16px;cursor:pointer;
+  background:rgba(255,255,255,0.08);border:2px solid transparent;
+  transition:0.2s;font-weight:700;font-size:15px;
+}
+.radio-label input[type=radio]{display:none;}
+.radio-label.ok{border-color:rgba(34,197,94,0.3);}
+.radio-label.ok:has(input:checked){
+  background:rgba(34,197,94,0.25);border-color:#22c55e;
+  box-shadow:0 0 15px rgba(34,197,94,0.3);
+}
+.radio-label.ko{border-color:rgba(239,68,68,0.3);}
+.radio-label.ko:has(input:checked){
+  background:rgba(239,68,68,0.25);border-color:#ef4444;
+  box-shadow:0 0 15px rgba(239,68,68,0.3);
 }
 
-/* CAMERA */
-
-#reader-wrapper{
-    position:relative;
-    margin-top:10px;
+/* INLINE QR PANEL */
+.inline-reader-wrap{
+  display:none;margin-top:10px;margin-bottom:10px;
+  position:relative;border-radius:20px;overflow:hidden;
 }
+.inline-reader-wrap.open{display:block;}
+.inline-reader{width:100%;min-height:220px;background:#000;border-radius:20px;}
+.inline-close{
+  position:absolute;top:10px;right:10px;
+  background:rgba(239,68,68,0.9);border:none;
+  color:white;font-size:18px;font-weight:bold;
+  width:34px;height:34px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4);z-index:10;
+  padding:0;
+}
+.inline-close:hover{transform:scale(1.1);box-shadow:none;}
 
+/* MAIN CAMERA */
+#reader-wrapper{position:relative;margin-top:10px;}
 #reader{
-    width:100%;
-    min-height:360px;
-    overflow:hidden;
-    border-radius:24px;
-    border:2px solid rgba(255,255,255,0.1);
-
-    box-shadow:
-        0 12px 25px rgba(0,0,0,0.5),
-        inset 0 0 25px rgba(255,255,255,0.04);
-
-    background:black;
+  width:100%;min-height:320px;overflow:hidden;
+  border-radius:24px;border:2px solid rgba(255,255,255,0.1);
+  box-shadow:0 12px 25px rgba(0,0,0,0.5),inset 0 0 25px rgba(255,255,255,0.04);
+  background:black;
 }
-
-/* FOCUS */
 
 #focus-box{
-    position:absolute;
-    width:110px;
-    height:110px;
-    border:3px solid #facc15;
-    border-radius:16px;
-    display:none;
-    transform:translate(-50%,-50%);
-    pointer-events:none;
-
-    box-shadow:
-        0 0 15px #facc15,
-        0 0 40px rgba(250,204,21,0.6);
+  position:absolute;width:110px;height:110px;
+  border:3px solid #facc15;border-radius:16px;display:none;
+  transform:translate(-50%,-50%);pointer-events:none;
+  box-shadow:0 0 15px #facc15,0 0 40px rgba(250,204,21,0.6);
 }
-
-/* COUNTER */
 
 #scan-counter{
-    position:absolute;
-    top:18px;
-    right:18px;
-
-    background:
-        linear-gradient(145deg,#ef4444,#b91c1c);
-
-    color:white;
-
-    padding:14px 22px;
-
-    border-radius:18px;
-
-    font-size:28px;
-    font-weight:bold;
-
-    display:none;
-
-    pointer-events:none;
-
-    z-index:100;
-
-    min-width:80px;
-
-    text-align:center;
-
-    box-shadow:
-        0 10px 20px rgba(0,0,0,0.5),
-        inset 0 2px 4px rgba(255,255,255,0.25);
+  position:absolute;top:18px;right:18px;
+  background:linear-gradient(145deg,#ef4444,#b91c1c);
+  color:white;padding:12px 18px;border-radius:18px;
+  font-size:26px;font-weight:bold;display:none;
+  pointer-events:none;z-index:100;min-width:72px;text-align:center;
+  box-shadow:0 10px 20px rgba(0,0,0,0.5),inset 0 2px 4px rgba(255,255,255,0.25);
 }
 
-/* WARNING */
-
 #overlay-warning{
-    position:absolute;
-
-    top:50%;
-    left:50%;
-
-    transform:translate(-50%,-50%);
-
-    background:rgba(239,68,68,0.95);
-
-    color:white;
-
-    padding:22px 30px;
-
-    border-radius:20px;
-
-    font-size:24px;
-    font-weight:bold;
-
-    display:none;
-
-    pointer-events:none;
-
-    z-index:100;
-
-    box-shadow:
-        0 15px 35px rgba(0,0,0,0.5);
-
-    animation:pulse 0.5s ease-in-out;
-
-    text-align:center;
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:rgba(239,68,68,0.95);color:white;
+  padding:20px 28px;border-radius:20px;
+  font-size:22px;font-weight:bold;display:none;
+  pointer-events:none;z-index:100;
+  box-shadow:0 15px 35px rgba(0,0,0,0.5);
+  animation:pulse 0.5s ease-in-out;text-align:center;
 }
 
 @keyframes pulse{
-
-    0%,100%{
-        transform:translate(-50%,-50%) scale(1);
-    }
-
-    50%{
-        transform:translate(-50%,-50%) scale(1.08);
-    }
+  0%,100%{transform:translate(-50%,-50%) scale(1);}
+  50%{transform:translate(-50%,-50%) scale(1.08);}
 }
 
-/* INFO BOX */
-
-.top-info{
-    display:flex;
-    gap:12px;
-    margin-top:18px;
-}
-
+/* INFO CARDS */
+.top-info{display:flex;gap:12px;margin-top:18px;}
 .card{
-    flex:1;
-
-    background:rgba(255,255,255,0.08);
-
-    border-radius:20px;
-
-    padding:16px;
-
-    text-align:center;
-
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.1),
-        0 8px 20px rgba(0,0,0,0.25);
+  flex:1;background:rgba(255,255,255,0.08);
+  border-radius:20px;padding:14px;text-align:center;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.1),0 8px 20px rgba(0,0,0,0.25);
 }
-
-.card-title{
-    font-size:13px;
-    opacity:0.8;
-    margin-bottom:8px;
-}
-
-.card-value{
-    font-size:28px;
-    font-weight:900;
-}
+.card-title{font-size:12px;opacity:0.8;margin-bottom:6px;}
+.card-value{font-size:26px;font-weight:900;}
 
 /* BUTTONS */
-
-.button-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-top:18px;
-}
+.button-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
 
 button{
-    border:none;
-    border-radius:20px;
-
-    padding:16px;
-
-    color:white;
-
-    font-size:16px;
-    font-weight:800;
-
-    cursor:pointer;
-
-    transition:0.18s;
-
-    position:relative;
-
-    overflow:hidden;
-
-    box-shadow:
-        0 10px 20px rgba(0,0,0,0.35),
-        inset 0 2px 4px rgba(255,255,255,0.25);
+  border:none;border-radius:18px;padding:14px;
+  color:white;font-size:15px;font-weight:800;
+  cursor:pointer;transition:0.18s;position:relative;overflow:hidden;
+  box-shadow:0 8px 18px rgba(0,0,0,0.35),inset 0 2px 4px rgba(255,255,255,0.25);
 }
-
-button:active{
-    transform:translateY(4px);
-
-    box-shadow:
-        0 4px 10px rgba(0,0,0,0.35);
-}
-
-button:hover{
-    transform:translateY(-2px);
-}
-
+button:active{transform:translateY(4px);box-shadow:0 4px 10px rgba(0,0,0,0.35);}
+button:hover{transform:translateY(-2px);}
 button::before{
-
-    content:"";
-
-    position:absolute;
-
-    top:0;
-    left:-100%;
-
-    width:100%;
-    height:100%;
-
-    background:
-        linear-gradient(
-            120deg,
-            transparent,
-            rgba(255,255,255,0.35),
-            transparent
-        );
-
-    transition:0.5s;
+  content:"";position:absolute;top:0;left:-100%;
+  width:100%;height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,0.35),transparent);
+  transition:0.5s;
 }
+button:hover::before{left:100%;}
 
-button:hover::before{
-    left:100%;
-}
-
-.start{
-    background:
-        linear-gradient(145deg,#22c55e,#15803d);
-}
-
-.stop{
-    background:
-        linear-gradient(145deg,#f59e0b,#d97706);
-}
-
-.copy{
-    background:
-        linear-gradient(145deg,#3b82f6,#1d4ed8);
-}
-
-.clear{
-    background:
-        linear-gradient(145deg,#ef4444,#b91c1c);
-}
+.start{background:linear-gradient(145deg,#22c55e,#15803d);}
+.stop{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.copy{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.clear{background:linear-gradient(145deg,#ef4444,#b91c1c);}
 
 /* TEXTAREA */
-
-textarea{
-    width:100%;
-    height:220px;
-
-    margin-top:20px;
-
-    padding:18px;
-
-    border:none;
-
-    border-radius:22px;
-
-    background:rgba(255,255,255,0.1);
-
-    color:white;
-
-    font-size:15px;
-
-    resize:none;
-
-    outline:none;
-
-    box-shadow:
-        inset 3px 3px 10px rgba(0,0,0,0.35),
-        inset -2px -2px 6px rgba(255,255,255,0.05);
+textarea.result-area{
+  width:100%;height:180px;margin-top:18px;padding:16px;
+  border:none;border-radius:20px;
+  background:rgba(255,255,255,0.1);color:white;font-size:14px;
+  resize:none;outline:none;
+  box-shadow:inset 3px 3px 10px rgba(0,0,0,0.35),inset -2px -2px 6px rgba(255,255,255,0.05);
 }
+textarea.result-area::placeholder{color:#d1d5db;}
 
-textarea::placeholder{
-    color:#d1d5db;
-}
-
-/* STATUS */
+/* SMALL TEXTAREA */
+.input-group textarea{resize:none;height:80px;font-size:14px;padding:12px 14px;}
 
 #status{
-    margin-top:16px;
-    text-align:center;
-    font-size:15px;
-    font-weight:bold;
-    color:#93c5fd;
-    min-height:22px;
+  margin-top:14px;text-align:center;font-size:14px;
+  font-weight:bold;color:#93c5fd;min-height:20px;
 }
 
-/* FOOTER */
+.info{text-align:center;margin-top:16px;color:#cbd5e1;font-size:13px;opacity:0.9;}
 
-.info{
-    text-align:center;
-    margin-top:18px;
-    color:#cbd5e1;
-    font-size:14px;
-    opacity:0.9;
+/* DIVIDER */
+.divider{
+  height:1px;background:rgba(255,255,255,0.1);
+  margin:20px 0;border-radius:1px;
 }
-
-/* MOBILE */
 
 @media(max-width:600px){
-
-    .button-grid{
-        grid-template-columns:1fr;
-    }
-
-    h2{
-        font-size:24px;
-    }
-
-    #overlay-warning{
-        font-size:20px;
-        width:90%;
-    }
+  .button-grid{grid-template-columns:1fr;}
+  .select-row{grid-template-columns:1fr;}
+  h2{font-size:22px;}
+  #overlay-warning{font-size:18px;width:90%;}
 }
-
 </style>
 </head>
-
 <body>
-
 <div class="container">
 
-    <h2>KIỂM KÊ CUỐI THÁNG HN</h2>
+  <h2>📋 KIỂM KÊ CUỐI THÁNG HN</h2>
 
-    <!-- SALE -->
+  <!-- ═══ THÔNG TIN NHÂN VIÊN ═══ -->
+  <div class="section-label">👤 Thông tin nhân viên</div>
 
-    <div class="input-group">
-        <input
-        type="text"
-        id="saleInput"
-        placeholder="Nhập Sale">
+  <div class="input-group">
+    <input type="text" id="saleInput" placeholder="Nhập tên Sale *">
+  </div>
+
+  <div class="input-group">
+    <input type="text" id="receiverInput" placeholder="Sale nhận (không bắt buộc)">
+  </div>
+
+  <!-- ═══ THÔNG TIN KHU VỰC & LIÊN HỆ ═══ -->
+  <div class="section-label">🗺️ Khu vực & Liên hệ</div>
+
+  <div class="select-row">
+    <div class="input-group" style="margin-bottom:0">
+      <select id="regionSelect">
+        <option value="" disabled selected>-- Chọn khu vực --</option>
+        <option value="Miền Bắc">🔵 Miền Bắc</option>
+        <option value="Miền Nam">🔴 Miền Nam</option>
+      </select>
     </div>
-
-    <!-- SALE NHẬN -->
-
-    <div class="input-group">
-        <input
-        type="text"
-        id="receiverInput"
-        placeholder="Nhập Sale nhận (không bắt buộc)">
+    <div class="input-group" style="margin-bottom:0">
+      <input type="tel" id="phoneInput" placeholder="📞 SĐT đăng ký MC (10 số)" maxlength="10" inputmode="numeric">
     </div>
+  </div>
+  <div id="phoneError" style="color:#f87171;font-size:12px;margin:-6px 0 10px 4px;display:none;">⚠ Số điện thoại phải đủ 10 chữ số</div>
 
-    <!-- CAMERA -->
+  <!-- ═══ THÔNG TIN THIẾT BỊ ═══ -->
+  <div class="section-label">🔧 Thông tin thiết bị</div>
 
-    <div id="reader-wrapper">
-
-        <div id="reader"></div>
-
-        <div id="focus-box"></div>
-
-        <div id="scan-counter">0</div>
-
-        <div id="overlay-warning">
-            MÃ QR ĐÃ TỒN TẠI
-        </div>
-
+  <!-- Serial máy lắp -->
+  <div class="input-group">
+    <div class="input-with-cam">
+      <input type="text" id="serialInput" placeholder="Serial máy lắp (nhập tay hoặc quét QR)">
+      <button class="cam-btn" onclick="openInlineScanner('serial')" title="Quét QR">📷</button>
     </div>
-
-    <!-- INFO -->
-
-    <div class="top-info">
-
-        <div class="card">
-
-            <div class="card-title">
-                TỔNG SCAN
-            </div>
-
-            <div class="card-value"
-            id="count">
-                0
-            </div>
-
-        </div>
-
-        <div class="card">
-
-            <div class="card-title">
-                TRẠNG THÁI
-            </div>
-
-            <div class="card-value"
-            style="font-size:18px">
-                READY
-            </div>
-
-        </div>
-
+    <div id="serial-reader-wrap" class="inline-reader-wrap">
+      <div id="serial-reader" class="inline-reader"></div>
+      <button class="inline-close" onclick="closeInlineScanner('serial')">✕</button>
     </div>
+  </div>
 
-    <div id="status"></div>
-
-    <!-- BUTTON -->
-
-    <div class="button-grid">
-
-        <button
-        class="start"
-        onclick="startScanner()">
-
-            ▶ START SCANNER
-
-        </button>
-
-        <button
-        class="stop"
-        onclick="stopScanner()">
-
-            ⏹ STOP SCANNER
-
-        </button>
-
-        <button
-        class="copy"
-        onclick="copyList()">
-
-            📋 COPY LIST
-
-        </button>
-
-        <button
-        class="clear"
-        onclick="clearList()">
-
-            🗑 CLEAR LIST
-
-        </button>
-
+  <!-- Mã số SIM -->
+  <div class="input-group">
+    <div class="input-with-cam">
+      <input type="text" id="simInput" placeholder="Mã số SIM (nhập tay hoặc quét QR)">
+      <button class="cam-btn" onclick="openInlineScanner('sim')" title="Quét QR">📷</button>
     </div>
-
-    <!-- RESULT -->
-
-    <textarea
-    id="resultList"
-    placeholder="DANH SÁCH MÃ QR ĐÃ SCAN"></textarea>
-
-    <div class="info">
-        Được viết bởi Nguyễn Mạnh Tuấn
-        https://byvn.net/zbFQ
+    <div id="sim-reader-wrap" class="inline-reader-wrap">
+      <div id="sim-reader" class="inline-reader"></div>
+      <button class="inline-close" onclick="closeInlineScanner('sim')">✕</button>
     </div>
+  </div>
+
+  <div class="select-row">
+    <div class="input-group" style="margin-bottom:0">
+      <input type="text" id="displayTimeInput" placeholder="⏱ Thời gian hiển thị màn hình">
+    </div>
+    <div class="input-group" style="margin-bottom:0">
+      <input type="text" id="serviceTypeInput" placeholder="⚙️ Loại dịch vụ">
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ CAMERA SCAN CHÍNH ═══ -->
+  <div class="section-label">📷 Quét mã QR / Barcode chính</div>
+
+  <div id="reader-wrapper">
+    <div id="reader"></div>
+    <div id="focus-box"></div>
+    <div id="scan-counter">0</div>
+    <div id="overlay-warning">MÃ QR ĐÃ TỒN TẠI</div>
+  </div>
+
+  <div class="top-info">
+    <div class="card">
+      <div class="card-title">TỔNG SCAN</div>
+      <div class="card-value" id="count">0</div>
+    </div>
+    <div class="card">
+      <div class="card-title">TRẠNG THÁI</div>
+      <div class="card-value" style="font-size:16px" id="scanStatus">READY</div>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <div class="button-grid">
+    <button class="start" onclick="startScanner()">▶ START SCANNER</button>
+    <button class="stop" onclick="stopScanner()">⏹ STOP SCANNER</button>
+    <button class="copy" onclick="copyList()">📋 COPY LIST</button>
+    <button class="clear" onclick="clearList()">🗑 CLEAR LIST</button>
+  </div>
+
+  <textarea class="result-area" id="resultList" placeholder="DANH SÁCH MÃ QR ĐÃ SCAN"></textarea>
+
+  <div class="divider"></div>
+
+  <!-- ═══ GHI CHÚ & TRẠNG THÁI ═══ -->
+  <div class="section-label">📝 Ghi chú & Đánh giá</div>
+
+  <div class="input-group">
+    <textarea id="noteInput" placeholder="Ghi chú..."></textarea>
+  </div>
+
+  <!-- Trạng thái -->
+  <div class="section-label">✅ Trạng thái</div>
+  <div class="radio-group">
+    <label class="radio-label ok">
+      <input type="radio" name="status" id="statusOK" value="OK">
+      ✅ OK
+    </label>
+    <label class="radio-label ko">
+      <input type="radio" name="status" id="statusKO" value="Ko">
+      ❌ Ko
+    </label>
+  </div>
+
+  <!-- NÚT GỬI THỦ CÔNG -->
+  <button style="width:100%;margin-top:4px;background:linear-gradient(145deg,#8b5cf6,#6d28d9);font-size:16px;padding:16px;" onclick="manualSendAll()">
+    🚀 GỬI TẤT CẢ LÊN GOOGLE SHEET
+  </button>
+
+  <div class="info">Được viết bởi Nguyễn Mạnh Tuấn — https://byvn.net/zbFQ</div>
 
 </div>
 
 <script>
-
-const GOOGLE_SCRIPT_URL =
-"https://script.google.com/macros/s/AKfycbwJgn0b-_P68i6NO3cFo6YRE5nEP5_lz6WV9NGVMVmT2UXi4sc-xp1Y7aAnMahvwxuJow/exec";
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmL48fGr24iKRq7UU-TEGkR6zfIz6rUV_wrzz46IRXWgJ57gHT5xkSImORslJZ41s2hA/exec";
 
 let scannedList = [];
-
 let html5QrCode = null;
-
 let scannerRunning = false;
-
 let lastScanTime = 0;
 
-/* START */
+// Inline scanners state
+let inlineScanners = {};
 
-async function startScanner(){
+/* ══════════════════════════════
+   PHONE VALIDATION
+══════════════════════════════ */
+document.getElementById('phoneInput').addEventListener('input', function(){
+  this.value = this.value.replace(/\D/g,'');
+  const err = document.getElementById('phoneError');
+  if(this.value.length > 0 && this.value.length !== 10){
+    err.style.display = 'block';
+  } else {
+    err.style.display = 'none';
+  }
+});
 
-    const sale =
-    document.getElementById(
-    "saleInput").value.trim();
+/* ══════════════════════════════
+   INLINE QR SCANNER (Serial / SIM)
+══════════════════════════════ */
+async function openInlineScanner(field){
+  const wrap = document.getElementById(field + '-reader-wrap');
+  const readerId = field + '-reader';
 
-    if(!sale){
+  // Close any existing inline scanner
+  for(const f in inlineScanners){
+    if(f !== field) await closeInlineScanner(f);
+  }
 
-        alert("BẠN CHƯA NHẬP TÊN SALE");
+  if(inlineScanners[field]){
+    await closeInlineScanner(field);
+    return;
+  }
 
-        return;
-    }
+  wrap.classList.add('open');
 
-    if(scannerRunning){
-        return;
-    }
+  try{
+    const scanner = new Html5Qrcode(readerId);
+    inlineScanners[field] = scanner;
 
-    try{
-
-        html5QrCode =
-        new Html5Qrcode("reader");
-
-        await html5QrCode.start(
-
-            {
-                facingMode:{
-                    ideal:"environment"
-                }
-            },
-
-            {
-
-                fps:30,
-
-                qrbox:function(w,h){
-
-                    return{
-
-                        width:
-                        Math.floor(w * 0.9),
-
-                        height:
-                        Math.floor(h * 0.32)
-                    };
-                },
-
-                aspectRatio:1.777,
-
-                disableFlip:false,
-
-                formatsToSupport:[
-
-                    Html5QrcodeSupportedFormats.QR_CODE,
-                    Html5QrcodeSupportedFormats.CODE_128,
-                    Html5QrcodeSupportedFormats.CODE_39,
-                    Html5QrcodeSupportedFormats.CODE_93,
-                    Html5QrcodeSupportedFormats.EAN_13,
-                    Html5QrcodeSupportedFormats.EAN_8,
-                    Html5QrcodeSupportedFormats.UPC_A,
-                    Html5QrcodeSupportedFormats.UPC_E,
-                    Html5QrcodeSupportedFormats.ITF,
-                    Html5QrcodeSupportedFormats.MSI,
-                    Html5QrcodeSupportedFormats.CODABAR,
-                    Html5QrcodeSupportedFormats.GS1_DATABAR,
-                    Html5QrcodeSupportedFormats.GS1_DATABAR_EXPANDED,
-                    Html5QrcodeSupportedFormats.DATA_MATRIX,
-                    Html5QrcodeSupportedFormats.AZTEC,
-                    Html5QrcodeSupportedFormats.PDF_417
-                ],
-
-                videoConstraints:{
-
-                    facingMode:{
-                        ideal:"environment"
-                    },
-
-                    width:{
-                        ideal:1920
-                    },
-
-                    height:{
-                        ideal:1080
-                    },
-
-                    advanced:[
-
-                        {
-                            focusMode:"continuous"
-                        },
-
-                        {
-                            zoom:1.5
-                        }
-                    ]
-                },
-
-                experimentalFeatures:{
-                    useBarCodeDetectorIfSupported:true
-                }
-            },
-
-            async function(decodedText,decodedResult){
-
-                const now = Date.now();
-
-                if(now - lastScanTime < 1000){
-                    return;
-                }
-
-                lastScanTime = now;
-
-                /* CHECK DUPLICATE */
-
-                if(scannedList.includes(decodedText)){
-
-                    showDuplicateWarning();
-
-                    navigator.vibrate?.([200,100,200]);
-
-                    return;
-                }
-
-                /* ADD LIST */
-
-                scannedList.push(decodedText);
-
-                document.getElementById(
-                "resultList").value =
-                scannedList.join("\n");
-
-                document.getElementById(
-                "count").innerText =
-                scannedList.length;
-
-                document.getElementById(
-                "scan-counter").innerText =
-                scannedList.length;
-
-                navigator.vibrate?.(100);
-
-                flashEffect();
-
-                let scanType = "BARCODE";
-
-                if(decodedResult.result
-                .format.formatName ===
-                "QR_CODE"){
-
-                    scanType = "QR";
-                }
-
-                /* SEND SHEET */
-
-                await autoSendToSheet(
-                    decodedText,
-                    scanType
-                );
-            }
-        );
-
-        scannerRunning = true;
-
-        document.getElementById(
-        "scan-counter")
-        .style.display = "block";
-
-        setupTapFocus();
-
-    }catch(err){
-
-        console.error(err);
-
-        alert("Lỗi camera:\n" + err);
-    }
+    await scanner.start(
+      {facingMode:{ideal:"environment"}},
+      {
+        fps:20,
+        qrbox:function(w,h){return{width:Math.floor(w*0.85),height:Math.floor(h*0.5)};},
+        aspectRatio:1.5,
+        formatsToSupport:[
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.DATA_MATRIX,
+        ],
+        experimentalFeatures:{useBarCodeDetectorIfSupported:true}
+      },
+      async function(decodedText){
+        const inputId = field === 'serial' ? 'serialInput' : 'simInput';
+        document.getElementById(inputId).value = decodedText;
+        navigator.vibrate?.(80);
+        await closeInlineScanner(field);
+        setStatus('✅ Đã quét ' + (field==='serial'?'Serial':'SIM') + ': ' + decodedText);
+      }
+    );
+  } catch(err){
+    console.error(err);
+    alert("Lỗi camera: " + err);
+    wrap.classList.remove('open');
+    delete inlineScanners[field];
+  }
 }
 
-/* SEND GOOGLE SHEET */
-
-async function autoSendToSheet(code,type){
-
+async function closeInlineScanner(field){
+  const wrap = document.getElementById(field + '-reader-wrap');
+  if(inlineScanners[field]){
     try{
+      await inlineScanners[field].stop();
+      await inlineScanners[field].clear();
+    }catch(e){}
+    delete inlineScanners[field];
+  }
+  wrap.classList.remove('open');
+}
 
-        const sale =
-        document.getElementById(
-        "saleInput")
-        .value.trim();
+/* ══════════════════════════════
+   MAIN SCANNER
+══════════════════════════════ */
+async function startScanner(){
+  const sale = document.getElementById("saleInput").value.trim();
+  if(!sale){ alert("BẠN CHƯA NHẬP TÊN SALE"); return; }
+  if(scannerRunning){ return; }
 
-        const receiver =
-        document.getElementById(
-        "receiverInput")
-        .value.trim();
+  try{
+    html5QrCode = new Html5Qrcode("reader");
 
-        if(!sale){
+    await html5QrCode.start(
+      {facingMode:{ideal:"environment"}},
+      {
+        fps:30,
+        qrbox:function(w,h){return{width:Math.floor(w*0.9),height:Math.floor(h*0.32)};},
+        aspectRatio:1.777,
+        disableFlip:false,
+        formatsToSupport:[
+          Html5QrcodeSupportedFormats.QR_CODE,
+          Html5QrcodeSupportedFormats.CODE_128,
+          Html5QrcodeSupportedFormats.CODE_39,
+          Html5QrcodeSupportedFormats.CODE_93,
+          Html5QrcodeSupportedFormats.EAN_13,
+          Html5QrcodeSupportedFormats.EAN_8,
+          Html5QrcodeSupportedFormats.UPC_A,
+          Html5QrcodeSupportedFormats.UPC_E,
+          Html5QrcodeSupportedFormats.ITF,
+          Html5QrcodeSupportedFormats.MSI,
+          Html5QrcodeSupportedFormats.CODABAR,
+          Html5QrcodeSupportedFormats.DATA_MATRIX,
+          Html5QrcodeSupportedFormats.AZTEC,
+          Html5QrcodeSupportedFormats.PDF_417
+        ],
+        videoConstraints:{
+          facingMode:{ideal:"environment"},
+          width:{ideal:1920},height:{ideal:1080},
+          advanced:[{focusMode:"continuous"},{zoom:1.5}]
+        },
+        experimentalFeatures:{useBarCodeDetectorIfSupported:true}
+      },
+      async function(decodedText, decodedResult){
+        const now = Date.now();
+        if(now - lastScanTime < 1000){ return; }
+        lastScanTime = now;
 
-            setStatus("Chưa nhập Sale");
-
-            return;
+        if(scannedList.includes(decodedText)){
+          showDuplicateWarning();
+          navigator.vibrate?.([200,100,200]);
+          return;
         }
 
-        setStatus("Đang gửi: " + code);
+        scannedList.push(decodedText);
+        document.getElementById("resultList").value = scannedList.join("\n");
+        document.getElementById("count").innerText = scannedList.length;
+        document.getElementById("scan-counter").innerText = scannedList.length;
+        navigator.vibrate?.(100);
+        flashEffect();
 
-        const url =
-        GOOGLE_SCRIPT_URL +
+        let scanType = "BARCODE";
+        if(decodedResult.result.format.formatName === "QR_CODE"){ scanType = "QR"; }
 
-        "?sale=" +
-        encodeURIComponent(sale) +
+        await autoSendToSheet(decodedText, scanType);
+      }
+    );
 
-        "&receiver=" +
-        encodeURIComponent(receiver) +
+    scannerRunning = true;
+    document.getElementById("scan-counter").style.display = "block";
+    document.getElementById("scanStatus").innerText = "SCANNING";
+    setupTapFocus();
 
-        "&code=" +
-        encodeURIComponent(code) +
-
-        "&type=" +
-        encodeURIComponent(type);
-
-        await fetch(url,{
-
-            method:"GET",
-
-            mode:"no-cors",
-
-            cache:"no-cache"
-        });
-
-        setStatus("Đã gửi: " + code);
-
-    }catch(err){
-
-        console.error(err);
-
-        setStatus("Lỗi gửi dữ liệu");
-    }
+  }catch(err){
+    console.error(err);
+    alert("Lỗi camera:\n" + err);
+  }
 }
 
-/* STOP */
+/* ══════════════════════════════
+   SEND TO GOOGLE SHEET (mỗi scan)
+══════════════════════════════ */
+async function autoSendToSheet(code, type){
+  try{
+    const sale     = document.getElementById("saleInput").value.trim();
+    const receiver = document.getElementById("receiverInput").value.trim();
+    const region   = document.getElementById("regionSelect").value;
+    const phone    = document.getElementById("phoneInput").value.trim();
+    const serial   = document.getElementById("serialInput").value.trim();
+    const sim      = document.getElementById("simInput").value.trim();
+    const dispTime = document.getElementById("displayTimeInput").value.trim();
+    const svcType  = document.getElementById("serviceTypeInput").value.trim();
+    const note     = document.getElementById("noteInput").value.trim();
+    const status   = document.querySelector('input[name="status"]:checked')?.value || "";
 
+    if(!sale){ setStatus("Chưa nhập Sale"); return; }
+
+    setStatus("📡 Đang gửi: " + code);
+
+    const params = new URLSearchParams({
+      sale, receiver, code, type,
+      region, phone, serial, sim,
+      displayTime: dispTime,
+      serviceType: svcType,
+      note, trangThai: status,
+      timestamp: new Date().toLocaleString('vi-VN')
+    });
+
+    await fetch(GOOGLE_SCRIPT_URL + "?" + params.toString(),{
+      method:"GET", mode:"no-cors", cache:"no-cache"
+    });
+
+    setStatus("✅ Đã gửi: " + code);
+
+  }catch(err){
+    console.error(err);
+    setStatus("❌ Lỗi gửi dữ liệu");
+  }
+}
+
+/* ══════════════════════════════
+   GỬI THỦ CÔNG (nút gửi)
+══════════════════════════════ */
+async function manualSendAll(){
+  const sale   = document.getElementById("saleInput").value.trim();
+  const phone  = document.getElementById("phoneInput").value.trim();
+
+  if(!sale){ alert("Bạn chưa nhập tên Sale!"); return; }
+  if(phone && phone.length !== 10){ alert("Số điện thoại phải đủ 10 chữ số!"); return; }
+  if(!document.getElementById("regionSelect").value){ alert("Vui lòng chọn khu vực!"); return; }
+
+  const region   = document.getElementById("regionSelect").value;
+  const receiver = document.getElementById("receiverInput").value.trim();
+  const serial   = document.getElementById("serialInput").value.trim();
+  const sim      = document.getElementById("simInput").value.trim();
+  const dispTime = document.getElementById("displayTimeInput").value.trim();
+  const svcType  = document.getElementById("serviceTypeInput").value.trim();
+  const note     = document.getElementById("noteInput").value.trim();
+  const trangThai= document.querySelector('input[name="status"]:checked')?.value || "";
+  const codeList = scannedList.join(", ");
+
+  setStatus("📡 Đang gửi dữ liệu...");
+
+  try{
+    const params = new URLSearchParams({
+      action: "manualSend",
+      sale, receiver, region, phone,
+      serial, sim,
+      displayTime: dispTime,
+      serviceType: svcType,
+      note, trangThai,
+      codeList,
+      totalScan: scannedList.length,
+      timestamp: new Date().toLocaleString('vi-VN')
+    });
+
+    await fetch(GOOGLE_SCRIPT_URL + "?" + params.toString(),{
+      method:"GET", mode:"no-cors", cache:"no-cache"
+    });
+
+    setStatus("✅ Đã gửi toàn bộ lên Google Sheet!");
+    navigator.vibrate?.(200);
+
+  }catch(err){
+    console.error(err);
+    setStatus("❌ Lỗi gửi dữ liệu: " + err);
+  }
+}
+
+/* ══════════════════════════════
+   STOP / COPY / CLEAR
+══════════════════════════════ */
 async function stopScanner(){
-
-    if(html5QrCode && scannerRunning){
-
-        await html5QrCode.stop();
-
-        await html5QrCode.clear();
-
-        scannerRunning = false;
-
-        document.getElementById(
-        "scan-counter")
-        .style.display = "none";
-    }
+  if(html5QrCode && scannerRunning){
+    await html5QrCode.stop();
+    await html5QrCode.clear();
+    scannerRunning = false;
+    document.getElementById("scan-counter").style.display = "none";
+    document.getElementById("scanStatus").innerText = "STOPPED";
+  }
 }
-
-/* COPY */
 
 function copyList(){
-
-    navigator.clipboard.writeText(
-
-        document.getElementById(
-        "resultList").value
-
-    );
-
-    alert("Đã copy");
+  navigator.clipboard.writeText(document.getElementById("resultList").value);
+  alert("Đã copy danh sách!");
 }
-
-/* CLEAR */
 
 function clearList(){
-
-    scannedList = [];
-
-    document.getElementById(
-    "resultList").value = "";
-
-    document.getElementById(
-    "count").innerText = 0;
-
-    document.getElementById(
-    "scan-counter").innerText = 0;
-
-    setStatus("");
+  scannedList = [];
+  document.getElementById("resultList").value = "";
+  document.getElementById("count").innerText = 0;
+  document.getElementById("scan-counter").innerText = 0;
+  document.getElementById("scanStatus").innerText = "READY";
+  setStatus("");
 }
 
-/* STATUS */
-
-function setStatus(text){
-
-    document.getElementById(
-    "status").innerText = text;
-}
-
-/* DUPLICATE */
+function setStatus(text){ document.getElementById("status").innerText = text; }
 
 function showDuplicateWarning(){
-
-    const overlayWarning =
-    document.getElementById(
-    "overlay-warning");
-
-    overlayWarning.style.display =
-    "block";
-
-    setTimeout(() => {
-
-        overlayWarning.style.display =
-        "none";
-
-    },1500);
+  const w = document.getElementById("overlay-warning");
+  w.style.display = "block";
+  setTimeout(()=>{ w.style.display="none"; }, 1500);
 }
-
-/* FLASH */
 
 function flashEffect(){
-
-    document.body.style.opacity =
-    "0.92";
-
-    setTimeout(() => {
-
-        document.body.style.opacity =
-        "1";
-
-    },100);
+  document.body.style.opacity = "0.92";
+  setTimeout(()=>{ document.body.style.opacity="1"; }, 100);
 }
-
-/* TAP FOCUS */
 
 function setupTapFocus(){
-
-    const wrapper =
-    document.getElementById(
-    "reader-wrapper");
-
-    const focusBox =
-    document.getElementById(
-    "focus-box");
-
-    wrapper.addEventListener(
-
-        "click",
-
-        function(e){
-
-            const rect =
-            wrapper.getBoundingClientRect();
-
-            const x =
-            e.clientX - rect.left;
-
-            const y =
-            e.clientY - rect.top;
-
-            focusBox.style.left =
-            x + "px";
-
-            focusBox.style.top =
-            y + "px";
-
-            focusBox.style.display =
-            "block";
-
-            setTimeout(() => {
-
-                focusBox.style.display =
-                "none";
-
-            },700);
-
-            navigator.vibrate?.(30);
-        }
-    );
+  const wrapper  = document.getElementById("reader-wrapper");
+  const focusBox = document.getElementById("focus-box");
+  wrapper.addEventListener("click", function(e){
+    const rect = wrapper.getBoundingClientRect();
+    focusBox.style.left = (e.clientX - rect.left) + "px";
+    focusBox.style.top  = (e.clientY - rect.top)  + "px";
+    focusBox.style.display = "block";
+    setTimeout(()=>{ focusBox.style.display="none"; }, 700);
+    navigator.vibrate?.(30);
+  });
 }
-
 </script>
-
 </body>
 </html>
