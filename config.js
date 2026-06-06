@@ -1,30 +1,18 @@
 // ============================================================
-//  CẤU HÌNH ỨNG DỤNG – Điền thông tin sau khi IT setup xong
+//  CẤU HÌNH – Chỉ cần điền SHEET_ID là xong!
 // ============================================================
 
 window.APP_CONFIG = {
 
-  // 1. Azure App Registration Client ID
-  //    IT lấy từ: Azure Portal → App registrations → App của bạn → Application (client) ID
-  CLIENT_ID: 'YOUR_CLIENT_ID_HERE',
+  // BẮT BUỘC: ID của Google Sheets
+  // Lấy từ URL: https://docs.google.com/spreadsheets/d/[SHEET_ID]/edit
+  // Ví dụ URL: https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit
+  // → SHEET_ID = 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms
+  SHEET_ID: '1S6D34yJOZsZBR6SxEDc0B9WVi7X6cPPYwCXk_HLJnR0',
 
-  // 2. Azure Tenant ID của VNG
-  //    IT lấy từ: Azure Portal → Azure Active Directory → Tenant ID
-  //    Hoặc thường là: vng.com.vn (custom domain) hoặc dạng GUID
-  TENANT_ID: 'YOUR_TENANT_ID_HERE',
-
-  // 3. Link SharePoint của file Excel
-  //    Copy link "Share" từ SharePoint (dạng https://vng.sharepoint.com/:x:/s/...)
-  FILE_URL: 'YOUR_SHAREPOINT_FILE_URL_HERE',
-
-  // 4. Tên sheet cần đọc (mặc định là DS_BanThue)
+  // Tên sheet chứa dữ liệu (mặc định DS_BanThue)
   SHEET_NAME: 'DS_BanThue',
 
-  // ── NÂNG CAO (nếu cách trên không work, IT cung cấp thêm) ──
-  // Site ID: lấy từ Graph API https://graph.microsoft.com/v1.0/sites/{hostname}:/{path}
-  SITE_ID: '',
-  // Drive ID: lấy từ https://graph.microsoft.com/v1.0/sites/{site-id}/drives
-  DRIVE_ID: '',
-  // File ID: lấy từ https://graph.microsoft.com/v1.0/sites/{site-id}/drives/{drive-id}/root/children
-  FILE_ID: '',
+  // Tự động refresh mỗi N phút (mặc định 60)
+  REFRESH_MINUTES: 60,
 };

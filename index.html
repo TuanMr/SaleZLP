@@ -3,718 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tra cứu doanh số – DS Bán Thuê</title>
-<script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.10.0/lib/msal-browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<title>Tra cứu DS Bán Thuê</title>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --brand: #005BAC;
-    --brand-light: #e8f0fa;
-    --brand-dark: #003f7f;
-    --accent: #f59e0b;
-    --green: #16a34a;
-    --red: #dc2626;
-    --bg: #f4f6fb;
-    --card: #ffffff;
-    --text: #1a2236;
-    --muted: #6b7a99;
-    --border: #dde3f0;
-    --radius: 12px;
-    --shadow: 0 2px 16px rgba(0,91,172,0.08);
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'Be Vietnam Pro', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+:root {
+  --brand: #005BAC;
+  --brand-2: #0072d6;
+  --brand-light: #e8f2fc;
+  --accent: #f59e0b;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --red: #dc2626;
+  --bg: #f0f4fa;
+  --card: #ffffff;
+  --text: #1a2236;
+  --muted: #64748b;
+  --border: #dde3f0;
+  --radius: 12px;
+  --shadow: 0 1px 12px rgba(0,91,172,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Be Vietnam Pro',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 
-  /* ── HEADER ── */
-  header {
-    background: var(--brand);
-    color: #fff;
-    padding: 0 32px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    position: sticky; top: 0; z-index: 100;
-  }
-  header .logo {
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.3px;
-    display: flex; align-items: center; gap: 10px;
-  }
-  header .logo svg { opacity: 0.9; }
-  #userInfo {
-    display: flex; align-items: center; gap: 12px;
-    font-size: 13px; opacity: 0.92;
-  }
-  #userInfo span { font-weight: 500; }
-  #btnLogin, #btnLogout {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 13px;
-    font-family: inherit;
-    font-weight: 500;
-    transition: background 0.2s;
-  }
-  #btnLogin:hover, #btnLogout:hover { background: rgba(255,255,255,0.25); }
+/* HEADER */
+header{
+  background:var(--brand);
+  color:#fff;padding:0 28px;height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 2px 10px rgba(0,0,0,0.18);
+  position:sticky;top:0;z-index:100;
+}
+.logo{font-size:15px;font-weight:700;display:flex;align-items:center;gap:9px;letter-spacing:-.2px;}
+.header-right{display:flex;align-items:center;gap:10px;font-size:12px;opacity:.88;}
+#syncStatus{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;padding:4px 12px;font-size:11px;font-weight:500;
+}
+.dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;}
+.dot.loading{background:#fbbf24;animation:pulse .8s ease-in-out infinite alternate;}
+.dot.error{background:#f87171;}
+@keyframes pulse{from{opacity:.4}to{opacity:1}}
 
-  /* ── MAIN ── */
-  main { max-width: 1100px; margin: 0 auto; padding: 28px 20px 60px; }
+/* MAIN */
+main{max-width:1120px;margin:0 auto;padding:24px 16px 60px;}
 
-  /* ── LOGIN SCREEN ── */
-  #loginScreen {
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; min-height: 70vh; gap: 20px; text-align: center;
-  }
-  #loginScreen .icon {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: var(--brand-light);
-    display: flex; align-items: center; justify-content: center;
-  }
-  #loginScreen h2 { font-size: 22px; font-weight: 700; color: var(--text); }
-  #loginScreen p { color: var(--muted); font-size: 14px; max-width: 360px; line-height: 1.6; }
-  #btnLoginBig {
-    background: var(--brand);
-    color: #fff;
-    border: none;
-    padding: 13px 32px;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    display: flex; align-items: center; gap: 10px;
-    transition: background 0.2s, transform 0.1s;
-  }
-  #btnLoginBig:hover { background: var(--brand-dark); }
-  #btnLoginBig:active { transform: scale(0.98); }
+/* CONFIG NOTICE */
+#configNotice{
+  background:#fffbeb;border:1px solid #fcd34d;border-radius:10px;
+  padding:12px 16px;font-size:13px;color:#92400e;
+  margin-bottom:16px;display:none;line-height:1.6;
+}
+#configNotice code{background:#fef3c7;padding:1px 5px;border-radius:4px;font-size:12px;}
 
-  /* ── APP SCREEN ── */
-  #appScreen { display: none; }
+/* SEARCH CARD */
+.search-card{
+  background:var(--card);border-radius:var(--radius);
+  padding:18px 22px;box-shadow:var(--shadow);
+  margin-bottom:18px;border:1px solid var(--border);
+}
+.card-label{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.6px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;}
+.search-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;}
+.field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:130px;}
+.field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.field input,.field select{
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:8px 11px;font-size:13.5px;font-family:inherit;
+  color:var(--text);background:#fff;outline:none;
+  transition:border-color .18s;
+}
+.field input:focus,.field select:focus{border-color:var(--brand);}
+.btn-primary{
+  background:var(--brand);color:#fff;border:none;
+  padding:9px 22px;border-radius:8px;font-size:13.5px;
+  font-weight:600;font-family:inherit;cursor:pointer;
+  white-space:nowrap;transition:background .18s,transform .1s;height:38px;
+}
+.btn-primary:hover{background:#004a8f;}
+.btn-primary:active{transform:scale(.98);}
+.btn-secondary{
+  background:var(--brand-light);color:var(--brand);
+  border:1.5px solid var(--brand);padding:8px 14px;
+  border-radius:8px;font-size:12.5px;font-weight:600;
+  font-family:inherit;cursor:pointer;height:38px;
+  transition:background .18s;display:flex;align-items:center;gap:5px;
+}
+.btn-secondary:hover{background:#d0e6f7;}
+#lastSync{font-size:11px;color:var(--muted);margin-top:8px;}
 
-  /* ── SEARCH BAR ── */
-  .search-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 20px 24px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    border: 1px solid var(--border);
-  }
-  .search-card h3 {
-    font-size: 13px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.5px;
-    color: var(--muted); margin-bottom: 14px;
-  }
-  .search-row {
-    display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end;
-  }
-  .field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 140px; }
-  .field label { font-size: 12px; font-weight: 600; color: var(--muted); }
-  .field input, .field select {
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 9px 12px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--text);
-    background: #fff;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .field input:focus, .field select:focus { border-color: var(--brand); }
-  #btnSearch {
-    background: var(--brand);
-    color: #fff;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.2s;
-    height: 40px;
-  }
-  #btnSearch:hover { background: var(--brand-dark); }
-  #btnRefresh {
-    background: var(--brand-light);
-    color: var(--brand);
-    border: 1.5px solid var(--brand);
-    padding: 9px 16px;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    height: 40px;
-    transition: background 0.2s;
-  }
-  #btnRefresh:hover { background: #d0e4f7; }
-  #lastSync { font-size: 11px; color: var(--muted); margin-top: 8px; }
+/* LOADING */
+#loadingBar{
+  display:none;align-items:center;gap:9px;
+  padding:10px 0;font-size:13px;color:var(--muted);
+}
+.spinner{
+  width:16px;height:16px;border:2px solid var(--border);
+  border-top-color:var(--brand);border-radius:50%;
+  animation:spin .65s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ── LOADING ── */
-  #loadingBar {
-    display: none;
-    align-items: center; gap: 10px;
-    padding: 12px 0;
-    font-size: 13px; color: var(--muted);
-  }
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid var(--border);
-    border-top-color: var(--brand);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* ERROR */
+#errorMsg{
+  display:none;background:#fff5f5;border:1px solid #fca5a5;
+  border-radius:8px;padding:12px 16px;color:var(--red);
+  font-size:13px;margin-bottom:14px;
+}
 
-  /* ── SUMMARY CARDS ── */
-  #summarySection { display: none; }
-  .summary-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
-  }
-  .summary-header h2 {
-    font-size: 17px; font-weight: 700;
-  }
-  .badge-sale {
-    background: var(--brand-light);
-    color: var(--brand);
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-  }
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .stat-card {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 16px 20px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-  }
-  .stat-card .label {
-    font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.5px;
-    color: var(--muted); margin-bottom: 8px;
-  }
-  .stat-card .value {
-    font-size: 26px; font-weight: 700; color: var(--brand);
-    line-height: 1;
-  }
-  .stat-card .sub {
-    font-size: 12px; color: var(--muted); margin-top: 4px;
-  }
-  .stat-card.green .value { color: var(--green); }
-  .stat-card.amber .value { color: var(--accent); }
+/* STATS */
+#summarySection{display:none;}
+.summary-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;flex-wrap:wrap;gap:8px;
+}
+.summary-header h2{font-size:16px;font-weight:700;}
+.badge{
+  background:var(--brand-light);color:var(--brand);
+  padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;
+}
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;margin-bottom:18px;
+}
+.stat{
+  background:var(--card);border-radius:var(--radius);
+  padding:14px 18px;border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.stat .lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.5px;color:var(--muted);margin-bottom:7px;}
+.stat .val{font-size:26px;font-weight:700;color:var(--brand);line-height:1;}
+.stat .sub{font-size:11px;color:var(--muted);margin-top:3px;}
+.stat.green .val{color:var(--green);}
+.stat.amber .val{color:#d97706;}
 
-  /* ── TABLE ── */
-  #detailSection { display: none; }
-  .table-header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
-  }
-  .table-header h3 { font-size: 15px; font-weight: 700; }
-  #recordCount {
-    font-size: 12px; color: var(--muted);
-    background: var(--bg);
-    padding: 4px 10px; border-radius: 20px;
-    border: 1px solid var(--border);
-  }
-  .table-wrap {
-    background: var(--card);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    overflow: auto;
-    max-height: 480px;
-  }
-  table {
-    width: 100%; border-collapse: collapse;
-    font-size: 13px;
-  }
-  thead tr {
-    background: var(--brand);
-    color: #fff;
-    position: sticky; top: 0; z-index: 2;
-  }
-  thead th {
-    padding: 11px 14px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 12px;
-    letter-spacing: 0.3px;
-    white-space: nowrap;
-  }
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-  tbody tr:hover { background: var(--brand-light); }
-  tbody tr:last-child { border-bottom: none; }
-  tbody td {
-    padding: 10px 14px;
-    color: var(--text);
-    white-space: nowrap;
-    font-size: 12.5px;
-  }
-  .stt-cell { color: var(--muted); font-size: 11px; }
-  .serial-cell { font-family: monospace; font-size: 11px; color: #444; }
-  .channel-badge {
-    display: inline-block;
-    padding: 2px 8px; border-radius: 10px;
-    font-size: 11px; font-weight: 600;
-  }
-  .ch-mn { background: #dcfce7; color: #15803d; }
-  .ch-mb { background: #dbeafe; color: #1d4ed8; }
-  .ch-mt { background: #fef9c3; color: #854d0e; }
-  .loai-vpb { background: #ede9fe; color: #6d28d9; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+/* TABLE */
+#detailSection{display:none;}
+.table-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:10px;flex-wrap:wrap;gap:8px;
+}
+.table-header h3{font-size:14px;font-weight:700;}
+.count-pill{
+  font-size:11px;color:var(--muted);
+  background:var(--bg);padding:3px 10px;
+  border-radius:20px;border:1px solid var(--border);
+}
+.table-wrap{
+  background:var(--card);border-radius:var(--radius);
+  border:1px solid var(--border);box-shadow:var(--shadow);
+  overflow:auto;max-height:500px;
+}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead tr{background:var(--brand);color:#fff;position:sticky;top:0;z-index:2;}
+thead th{
+  padding:10px 13px;text-align:left;font-weight:600;
+  font-size:11.5px;letter-spacing:.2px;white-space:nowrap;
+}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s;}
+tbody tr:hover{background:var(--brand-light);}
+tbody tr:last-child{border-bottom:none;}
+tbody td{padding:9px 13px;white-space:nowrap;}
+.muted{color:var(--muted);font-size:11px;}
+.mono{font-family:monospace;font-size:11px;color:#444;}
+.ch{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.ch-mn{background:#dcfce7;color:#15803d;}
+.ch-mb{background:#dbeafe;color:#1d4ed8;}
+.ch-mt{background:#fef9c3;color:#854d0e;}
+.loai{display:inline-block;background:#ede9fe;color:#6d28d9;
+  padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.sale-name{font-weight:600;color:var(--brand);}
+.store-id{font-weight:600;}
 
-  /* ── EMPTY / ERROR ── */
-  #emptyMsg {
-    display: none;
-    text-align: center; padding: 48px 20px;
-    color: var(--muted); font-size: 14px;
-  }
-  #errorMsg {
-    display: none;
-    background: #fff5f5;
-    border: 1px solid #fca5a5;
-    border-radius: 8px;
-    padding: 14px 18px;
-    color: var(--red);
-    font-size: 13px;
-    margin-bottom: 16px;
-  }
-
-  /* ── CONFIG NOTICE ── */
-  #configNotice {
-    background: #fffbeb;
-    border: 1px solid #fcd34d;
-    border-radius: 8px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: #92400e;
-    margin-bottom: 16px;
-    display: none;
-  }
-  #configNotice strong { font-weight: 700; }
+/* EMPTY */
+#emptyMsg{
+  display:none;text-align:center;padding:44px 20px;
+  color:var(--muted);font-size:14px;
+  background:var(--card);border-radius:var(--radius);border:1px solid var(--border);
+}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
-      <path d="M7 8h2v5H7zM11 8h2v3h-2zM15 8h2v6h-2z"/>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2"/>
+      <path d="M8 21h8M12 17v4M7 8h2v5H7zM11 8h2v3h-2zM15 8h2v6h-2z"/>
     </svg>
-    Tra cứu DS Bán Thuê
+    DS Bán Thuê – Tra cứu
   </div>
-  <div id="userInfo">
-    <span id="userName" style="display:none"></span>
-    <button id="btnLogout" style="display:none" onclick="logout()">Đăng xuất</button>
-    <button id="btnLogin" onclick="login()">Đăng nhập Microsoft</button>
+  <div class="header-right">
+    <div id="syncStatus">
+      <div class="dot loading" id="syncDot"></div>
+      <span id="syncText">Đang kết nối...</span>
+    </div>
   </div>
 </header>
 
 <main>
   <div id="configNotice">
-    ⚙️ <strong>Chưa cấu hình:</strong> Vui lòng mở file <code>config.js</code> và điền <strong>CLIENT_ID</strong>, <strong>TENANT_ID</strong> và <strong>FILE_URL</strong> của SharePoint. Xem file <code>HUONG_DAN_IT.md</code> để biết cách lấy.
+    ⚙️ <strong>Chưa cấu hình:</strong> Mở file <code>config.js</code>, điền <code>SHEET_ID</code> của Google Sheets vào. Xem file <code>HUONG_DAN_SETUP.md</code> để biết cách lấy.
   </div>
 
-  <!-- LOGIN SCREEN -->
-  <div id="loginScreen">
-    <div class="icon">
-      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#005BAC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-      </svg>
+  <!-- SEARCH -->
+  <div class="search-card">
+    <div class="card-label">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Tìm kiếm
     </div>
-    <h2>Tra cứu Doanh số Bán Thuê</h2>
-    <p>Đăng nhập bằng tài khoản VNG (@vng.com.vn) để truy cập dữ liệu real-time từ SharePoint.</p>
-    <button id="btnLoginBig" onclick="login()">
-      <svg width="20" height="20" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-        <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-        <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-        <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-      </svg>
-      Đăng nhập với Microsoft
-    </button>
+    <div class="search-row">
+      <div class="field">
+        <label>Tên Salesman</label>
+        <input type="text" id="inputSale" placeholder="vd: daodtx, khadbktg..." list="saleList" autocomplete="off">
+        <datalist id="saleList"></datalist>
+      </div>
+      <div class="field" style="max-width:150px">
+        <label>Tháng</label>
+        <select id="inputMonth">
+          <option value="">-- Tất cả --</option>
+          <option value="1">Tháng 1</option><option value="2">Tháng 2</option>
+          <option value="3">Tháng 3</option><option value="4">Tháng 4</option>
+          <option value="5">Tháng 5</option><option value="6">Tháng 6</option>
+          <option value="7">Tháng 7</option><option value="8">Tháng 8</option>
+          <option value="9">Tháng 9</option><option value="10">Tháng 10</option>
+          <option value="11">Tháng 11</option><option value="12">Tháng 12</option>
+        </select>
+      </div>
+      <div class="field" style="max-width:120px">
+        <label>Năm</label>
+        <select id="inputYear">
+          <option value="2026">2026</option>
+          <option value="2025">2025</option>
+        </select>
+      </div>
+      <button class="btn-primary" onclick="doSearch()">Tra cứu</button>
+      <button class="btn-secondary" onclick="loadSheet(true)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+        Sync
+      </button>
+    </div>
+    <div id="lastSync"></div>
+    <div id="loadingBar">
+      <div class="spinner"></div>
+      <span id="loadingText">Đang tải dữ liệu từ Google Sheets...</span>
+    </div>
   </div>
 
-  <!-- APP SCREEN -->
-  <div id="appScreen">
+  <div id="errorMsg"></div>
 
-    <!-- Search -->
-    <div class="search-card">
-      <h3>🔍 Tìm kiếm</h3>
-      <div class="search-row">
-        <div class="field">
-          <label>Tên Salesman</label>
-          <input type="text" id="inputSale" placeholder="vd: daodtx, khadbktg..." list="saleList">
-          <datalist id="saleList"></datalist>
-        </div>
-        <div class="field" style="max-width:160px">
-          <label>Tháng</label>
-          <select id="inputMonth">
-            <option value="">-- Tất cả --</option>
-            <option value="1">Tháng 1</option>
-            <option value="2">Tháng 2</option>
-            <option value="3">Tháng 3</option>
-            <option value="4">Tháng 4</option>
-            <option value="5">Tháng 5</option>
-            <option value="6">Tháng 6</option>
-            <option value="7">Tháng 7</option>
-            <option value="8">Tháng 8</option>
-            <option value="9">Tháng 9</option>
-            <option value="10">Tháng 10</option>
-            <option value="11">Tháng 11</option>
-            <option value="12">Tháng 12</option>
-          </select>
-        </div>
-        <div class="field" style="max-width:140px">
-          <label>Năm</label>
-          <select id="inputYear">
-            <option value="2026">2026</option>
-            <option value="2025">2025</option>
-          </select>
-        </div>
-        <button id="btnSearch" onclick="doSearch()">Tra cứu</button>
-        <button id="btnRefresh" onclick="loadData(true)" title="Tải lại dữ liệu từ SharePoint">↻ Sync</button>
+  <!-- SUMMARY -->
+  <div id="summarySection">
+    <div class="summary-header">
+      <h2 id="summaryTitle">Kết quả</h2>
+      <span class="badge" id="badgeCount"></span>
+    </div>
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="lbl">Tổng số máy</div>
+        <div class="val" id="sTotal">0</div>
+        <div class="sub">đơn hàng</div>
       </div>
-      <div id="lastSync"></div>
-      <div id="loadingBar">
-        <div class="spinner"></div>
-        <span id="loadingText">Đang tải dữ liệu từ SharePoint...</span>
+      <div class="stat green">
+        <div class="lbl">Bán_VPB</div>
+        <div class="val" id="sVPB">0</div>
+        <div class="sub">máy</div>
+      </div>
+      <div class="stat amber">
+        <div class="lbl">Miền Nam</div>
+        <div class="val" id="sMN">0</div>
+        <div class="sub">máy</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">Miền Bắc</div>
+        <div class="val" id="sMB">0</div>
+        <div class="sub">máy</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">Cửa hàng</div>
+        <div class="val" id="sStore">0</div>
+        <div class="sub">store IDs</div>
       </div>
     </div>
-
-    <div id="errorMsg"></div>
-
-    <!-- Summary -->
-    <div id="summarySection">
-      <div class="summary-header">
-        <h2 id="summaryTitle">Kết quả</h2>
-        <span class="badge-sale" id="badgeSale"></span>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="label">Tổng số máy</div>
-          <div class="value" id="statTotal">0</div>
-          <div class="sub">đơn hàng</div>
-        </div>
-        <div class="stat-card green">
-          <div class="label">Loại Bán_VPB</div>
-          <div class="value" id="statVPB">0</div>
-          <div class="sub">máy</div>
-        </div>
-        <div class="stat-card amber">
-          <div class="label">Miền Nam</div>
-          <div class="value" id="statMN">0</div>
-          <div class="sub">máy</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">Miền Bắc</div>
-          <div class="value" id="statMB">0</div>
-          <div class="sub">máy</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">Store IDs</div>
-          <div class="value" id="statStore">0</div>
-          <div class="sub">cửa hàng</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Detail Table -->
-    <div id="detailSection">
-      <div class="table-header">
-        <h3>📋 Danh sách chi tiết</h3>
-        <span id="recordCount"></span>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>STT</th>
-              <th>Team</th>
-              <th>Ngày</th>
-              <th>Channel</th>
-              <th>Salesman</th>
-              <th>SĐT đăng ký</th>
-              <th>Store ID</th>
-              <th>Dòng máy</th>
-              <th>Serial Sound Box</th>
-              <th>Serial SIM 4G</th>
-              <th>Ngày kích hoạt SIM</th>
-              <th>Loại dịch vụ</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div id="emptyMsg">😕 Không tìm thấy kết quả phù hợp.</div>
   </div>
+
+  <!-- TABLE -->
+  <div id="detailSection">
+    <div class="table-header">
+      <h3>📋 Danh sách chi tiết</h3>
+      <span class="count-pill" id="recCount"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>STT</th><th>Team</th><th>Ngày</th>
+            <th>Channel</th><th>Salesman</th><th>SĐT đăng ký</th>
+            <th>Store ID</th><th>Dòng máy</th>
+            <th>Serial Sound Box</th><th>Serial SIM 4G</th>
+            <th>Ngày KH SIM</th><th>Loại DV</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="emptyMsg">😕 Không tìm thấy kết quả phù hợp.</div>
 </main>
 
 <script src="config.js"></script>
 <script>
-// ── MSAL SETUP ──
-let msalInstance = null;
+// ── STATE ──
 let allData = [];
-let lastSyncTime = null;
+let autoRefreshTimer = null;
 
-function initMSAL() {
-  if (!window.APP_CONFIG || !APP_CONFIG.CLIENT_ID || APP_CONFIG.CLIENT_ID === 'YOUR_CLIENT_ID_HERE') {
+// ── BOOT ──
+window.addEventListener('load', () => {
+  if (!window.APP_CONFIG || !APP_CONFIG.SHEET_ID || APP_CONFIG.SHEET_ID === 'YOUR_GOOGLE_SHEET_ID') {
     document.getElementById('configNotice').style.display = 'block';
-    return false;
-  }
-  const msalConfig = {
-    auth: {
-      clientId: APP_CONFIG.CLIENT_ID,
-      authority: `https://login.microsoftonline.com/${APP_CONFIG.TENANT_ID}`,
-      redirectUri: window.location.origin + window.location.pathname,
-    },
-    cache: { cacheLocation: 'sessionStorage' }
-  };
-  msalInstance = new msal.PublicClientApplication(msalConfig);
-  return true;
-}
-
-async function login() {
-  if (!initMSAL()) {
-    alert('Vui lòng cấu hình CLIENT_ID và TENANT_ID trong file config.js trước!');
+    setSyncStatus('error', 'Chưa cấu hình');
     return;
   }
-  try {
-    await msalInstance.handleRedirectPromise();
-    const result = await msalInstance.loginPopup({
-      scopes: ['Files.Read', 'Files.Read.All', 'Sites.Read.All', 'User.Read']
-    });
-    onLoginSuccess(result.account);
-  } catch (e) {
-    showError('Đăng nhập thất bại: ' + e.message);
-  }
-}
+  // Set current month/year as default
+  const now = new Date();
+  document.getElementById('inputMonth').value = String(now.getMonth() + 1);
+  document.getElementById('inputYear').value = String(now.getFullYear());
 
-async function logout() {
-  if (msalInstance) {
-    await msalInstance.logoutPopup();
-  }
-  showLoginScreen();
-}
-
-function onLoginSuccess(account) {
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'block';
-  document.getElementById('userName').textContent = account.name || account.username;
-  document.getElementById('userName').style.display = 'inline';
-  document.getElementById('btnLogout').style.display = 'inline';
-  document.getElementById('btnLogin').style.display = 'none';
-  loadData(false);
-}
-
-function showLoginScreen() {
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('appScreen').style.display = 'none';
-  document.getElementById('userName').style.display = 'none';
-  document.getElementById('btnLogout').style.display = 'none';
-  document.getElementById('btnLogin').style.display = 'inline';
-  allData = [];
-}
-
-// ── CHECK SESSION ON LOAD ──
-window.addEventListener('load', async () => {
-  if (!initMSAL()) return;
-  try {
-    await msalInstance.handleRedirectPromise();
-    const accounts = msalInstance.getAllAccounts();
-    if (accounts.length > 0) {
-      onLoginSuccess(accounts[0]);
-    }
-  } catch(e) {}
+  loadSheet(false);
+  startAutoRefresh();
 });
 
-// ── GET ACCESS TOKEN ──
-async function getToken() {
-  const accounts = msalInstance.getAllAccounts();
-  if (!accounts.length) throw new Error('Chưa đăng nhập');
-  const req = {
-    scopes: ['Files.Read', 'Files.Read.All', 'Sites.Read.All'],
-    account: accounts[0]
-  };
-  try {
-    const res = await msalInstance.acquireTokenSilent(req);
-    return res.accessToken;
-  } catch {
-    const res = await msalInstance.acquireTokenPopup(req);
-    return res.accessToken;
-  }
+// ── AUTO REFRESH every 60 min ──
+function startAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  const interval = (APP_CONFIG.REFRESH_MINUTES || 60) * 60 * 1000;
+  autoRefreshTimer = setInterval(() => loadSheet(false), interval);
 }
 
-// ── LOAD DATA FROM SHAREPOINT ──
-async function loadData(forceRefresh) {
-  if (!APP_CONFIG.FILE_URL || APP_CONFIG.FILE_URL === 'YOUR_SHAREPOINT_FILE_URL_HERE') {
-    showError('Chưa cấu hình FILE_URL trong config.js');
-    return;
-  }
+// ── LOAD FROM GOOGLE SHEETS ──
+async function loadSheet(manual) {
+  setSyncStatus('loading', manual ? 'Đang sync...' : 'Đang tải...');
+  setLoading(true, 'Đang tải dữ liệu từ Google Sheets...');
 
-  setLoading(true, 'Đang lấy token xác thực...');
+  const sheetName = encodeURIComponent(APP_CONFIG.SHEET_NAME || 'DS_BanThue');
+  // Use Google Sheets CSV export URL (no API key needed for public sheets)
+  const url = `https://docs.google.com/spreadsheets/d/${APP_CONFIG.SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+
   try {
-    const token = await getToken();
-
-    setLoading(true, 'Đang tải file Excel từ SharePoint...');
-    // Convert SharePoint share URL to Graph API download URL
-    const fileUrl = APP_CONFIG.FILE_URL;
-    let downloadUrl;
-
-    if (fileUrl.includes('/_api/') || fileUrl.includes('graph.microsoft.com')) {
-      downloadUrl = fileUrl;
-    } else {
-      // Use encoded share URL approach
-      const encoded = btoa(fileUrl).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
-      downloadUrl = `https://graph.microsoft.com/v1.0/shares/u!${encoded}/driveItem/content`;
+    const res = await fetch(url + '&t=' + Date.now()); // cache bust
+    if (!res.ok) throw new Error(`HTTP ${res.status} – Kiểm tra SHEET_ID và quyền chia sẻ`);
+    const csv = await res.text();
+    if (csv.includes('Signin') || csv.includes('accounts.google')) {
+      throw new Error('Google Sheets chưa được chia sẻ public. Xem hướng dẫn setup.');
     }
-
-    const resp = await fetch(downloadUrl, {
-      headers: { Authorization: 'Bearer ' + token }
-    });
-
-    if (!resp.ok) {
-      // Fallback: try direct site/drive path if configured
-      if (APP_CONFIG.SITE_ID && APP_CONFIG.DRIVE_ID && APP_CONFIG.FILE_ID) {
-        const r2 = await fetch(
-          `https://graph.microsoft.com/v1.0/sites/${APP_CONFIG.SITE_ID}/drives/${APP_CONFIG.DRIVE_ID}/items/${APP_CONFIG.FILE_ID}/content`,
-          { headers: { Authorization: 'Bearer ' + token } }
-        );
-        if (!r2.ok) throw new Error(`Lỗi ${r2.status}: Không tải được file. Kiểm tra quyền và cấu hình.`);
-        const buf = await r2.arrayBuffer();
-        parseExcel(buf);
-      } else {
-        throw new Error(`Lỗi ${resp.status}: Không tải được file. Kiểm tra FILE_URL và quyền truy cập.`);
-      }
-    } else {
-      const buf = await resp.arrayBuffer();
-      parseExcel(buf);
-    }
-
-    lastSyncTime = new Date();
+    parseCSV(csv);
+    const now = new Date();
     document.getElementById('lastSync').textContent =
-      'Dữ liệu cập nhật lúc: ' + lastSyncTime.toLocaleTimeString('vi-VN');
-
+      'Cập nhật lúc: ' + now.toLocaleTimeString('vi-VN') + ' – ' + now.toLocaleDateString('vi-VN');
+    setSyncStatus('ok', 'Đã đồng bộ · ' + allData.length.toLocaleString('vi-VN') + ' dòng');
+    hideError();
   } catch(e) {
+    setSyncStatus('error', 'Lỗi kết nối');
     showError(e.message);
   } finally {
     setLoading(false);
   }
 }
 
-// ── PARSE EXCEL ──
-function parseExcel(buffer) {
-  const wb = XLSX.read(buffer, { type: 'array', cellDates: true });
+// ── PARSE CSV ──
+function parseCSV(csv) {
+  const lines = csv.split('\n').filter(l => l.trim());
+  if (lines.length < 2) return;
 
-  // Find sheet DS_BanThue
-  const sheetName = APP_CONFIG.SHEET_NAME || 'DS_BanThue';
-  const ws = wb.Sheets[sheetName] || wb.Sheets[wb.SheetNames[0]];
-  if (!ws) throw new Error('Không tìm thấy sheet ' + sheetName);
-
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, dateNF: 'yyyy-mm-dd' });
-
-  // Find header row (row with "Salesman" or "STT")
-  let headerIdx = 0;
-  for (let i = 0; i < Math.min(10, rows.length); i++) {
-    if (rows[i] && rows[i].some(c => c && String(c).toLowerCase().includes('salesman'))) {
-      headerIdx = i; break;
+  // Parse quoted CSV properly
+  function parseLine(line) {
+    const cols = []; let cur = ''; let inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (c === '"') { inQ = !inQ; continue; }
+      if (c === ',' && !inQ) { cols.push(cur.trim()); cur = ''; continue; }
+      cur += c;
     }
+    cols.push(cur.trim());
+    return cols;
   }
 
-  const headers = rows[headerIdx].map(h => String(h || '').trim());
-  const colMap = {};
-  headers.forEach((h, i) => { colMap[h.toLowerCase()] = i; });
+  // Find header row containing "Salesman"
+  let headerIdx = 0;
+  let headers = [];
+  for (let i = 0; i < Math.min(8, lines.length); i++) {
+    const cols = parseLine(lines[i]);
+    if (cols.some(c => c.toLowerCase().includes('salesman'))) {
+      headerIdx = i; headers = cols; break;
+    }
+  }
+  if (!headers.length) { headers = parseLine(lines[0]); }
 
-  // Map column indices
-  const COL = {
-    stt:        findCol(colMap, ['stt']),
-    team:       findCol(colMap, ['team']),
-    time:       findCol(colMap, ['time']),
-    channel:    findCol(colMap, ['channel']),
-    salesman:   findCol(colMap, ['salesman']),
-    sdt:        findCol(colMap, ['sđt đăng ký', 'sdt dang ky', 'sđt']),
-    store:      findCol(colMap, ['store id', 'storeid']),
-    dong:       findCol(colMap, ['dòng máy', 'dong may', 'dòng m']),
-    serial_box: findCol(colMap, ['serial sound box', 'serial soundbox']),
-    serial_sim: findCol(colMap, ['serial sim 4g', 'serial sim']),
-    ngay_kt:    findCol(colMap, ['ngày kích hoạt sim', 'ngay kich hoat', 'ngày kích']),
-    loai:       findCol(colMap, ['loại dịch vụ', 'loai dich vu', 'loại dịch']),
+  // Map columns
+  const idx = (keys) => {
+    for (const k of keys)
+      for (let i = 0; i < headers.length; i++)
+        if (headers[i].toLowerCase().includes(k.toLowerCase())) return i;
+    return -1;
   };
 
-  allData = [];
-  const salesSet = new Set();
+  const COL = {
+    stt:   idx(['stt']),
+    team:  idx(['team']),
+    time:  idx(['time']),
+    ch:    idx(['channel']),
+    sale:  idx(['salesman']),
+    sdt:   idx(['đăng ký', 'dang ky', 'sđt']),
+    store: idx(['store id', 'storeid']),
+    dong:  idx(['dòng m', 'dong m']),
+    sbox:  idx(['serial sound', 'sound box']),
+    ssim:  idx(['serial sim', 'sim 4g']),
+    nkt:   idx(['kích hoạt', 'kich hoat']),
+    loai:  idx(['loại dịch', 'loai dich']),
+  };
 
-  for (let i = headerIdx + 1; i < rows.length; i++) {
-    const r = rows[i];
-    if (!r || !r.length) continue;
-    const salesman = str(r, COL.salesman);
-    if (!salesman) continue;
-    salesSet.add(salesman);
+  const salesSet = new Set();
+  allData = [];
+
+  for (let i = headerIdx + 1; i < lines.length; i++) {
+    const r = parseLine(lines[i]);
+    const sale = g(r, COL.sale);
+    if (!sale) continue;
+    salesSet.add(sale);
     allData.push({
-      stt:        str(r, COL.stt),
-      team:       str(r, COL.team),
-      time:       str(r, COL.time),
-      channel:    str(r, COL.channel),
-      salesman,
-      sdt:        str(r, COL.sdt),
-      store:      str(r, COL.store),
-      dong:       str(r, COL.dong),
-      serial_box: str(r, COL.serial_box),
-      serial_sim: str(r, COL.serial_sim),
-      ngay_kt:    str(r, COL.ngay_kt),
-      loai:       str(r, COL.loai),
+      stt: g(r,COL.stt), team: g(r,COL.team), time: g(r,COL.time),
+      ch: g(r,COL.ch), sale, sdt: g(r,COL.sdt), store: g(r,COL.store),
+      dong: g(r,COL.dong), sbox: g(r,COL.sbox), ssim: g(r,COL.ssim),
+      nkt: g(r,COL.nkt), loai: g(r,COL.loai),
     });
   }
 
-  // Populate datalist for autocomplete
+  // Autocomplete
   const dl = document.getElementById('saleList');
-  dl.innerHTML = '';
-  [...salesSet].sort().forEach(s => {
-    const opt = document.createElement('option');
-    opt.value = s; dl.appendChild(opt);
-  });
-
-  console.log(`Loaded ${allData.length} rows from ${sheetName}`);
+  dl.innerHTML = [...salesSet].sort().map(s => `<option value="${s}">`).join('');
 }
 
-function findCol(colMap, keys) {
-  for (const k of keys) {
-    for (const [h, i] of Object.entries(colMap)) {
-      if (h.includes(k)) return i;
-    }
-  }
-  return -1;
-}
-function str(row, idx) {
+function g(row, idx) {
   if (idx < 0 || idx >= row.length) return '';
   return String(row[idx] || '').trim();
 }
@@ -725,18 +457,12 @@ function doSearch() {
   const month = document.getElementById('inputMonth').value;
   const year = document.getElementById('inputYear').value;
 
-  if (!allData.length) {
-    showError('Chưa có dữ liệu. Vui lòng đăng nhập và đợi dữ liệu tải xong.');
-    return;
-  }
+  if (!allData.length) { showError('Chưa có dữ liệu. Nhấn Sync để tải lại.'); return; }
 
-  let filtered = allData;
-
-  if (sale) {
-    filtered = filtered.filter(r => r.salesman.toLowerCase().includes(sale));
-  }
+  let data = allData;
+  if (sale) data = data.filter(r => r.sale.toLowerCase().includes(sale));
   if (month || year) {
-    filtered = filtered.filter(r => {
+    data = data.filter(r => {
       if (!r.time) return false;
       const d = new Date(r.time);
       if (isNaN(d)) return false;
@@ -745,69 +471,68 @@ function doSearch() {
       return true;
     });
   }
-
-  renderResults(filtered, sale, month, year);
+  render(data, sale, month, year);
 }
 
-function renderResults(data, sale, month, year) {
-  const summaryEl = document.getElementById('summarySection');
-  const detailEl = document.getElementById('detailSection');
-  const emptyEl = document.getElementById('emptyMsg');
+// ── RENDER ──
+function render(data, sale, month, year) {
+  const sum = document.getElementById('summarySection');
+  const det = document.getElementById('detailSection');
+  const emp = document.getElementById('emptyMsg');
 
   if (!data.length) {
-    summaryEl.style.display = 'none';
-    detailEl.style.display = 'none';
-    emptyEl.style.display = 'block';
-    return;
+    sum.style.display = 'none'; det.style.display = 'none'; emp.style.display = 'block'; return;
   }
-  emptyEl.style.display = 'none';
+  emp.style.display = 'none';
 
-  // Stats
-  const vpb = data.filter(r => r.loai && r.loai.includes('VPB')).length;
-  const mn = data.filter(r => r.channel && r.channel.includes('Nam')).length;
-  const mb = data.filter(r => r.channel && r.channel.includes('Bắc')).length;
+  const vpb   = data.filter(r => r.loai.includes('VPB')).length;
+  const mn    = data.filter(r => r.ch.includes('Nam')).length;
+  const mb    = data.filter(r => r.ch.includes('Bắc')).length;
   const stores = new Set(data.map(r => r.store).filter(Boolean)).size;
 
-  document.getElementById('statTotal').textContent = data.length.toLocaleString('vi-VN');
-  document.getElementById('statVPB').textContent = vpb.toLocaleString('vi-VN');
-  document.getElementById('statMN').textContent = mn.toLocaleString('vi-VN');
-  document.getElementById('statMB').textContent = mb.toLocaleString('vi-VN');
-  document.getElementById('statStore').textContent = stores.toLocaleString('vi-VN');
+  document.getElementById('sTotal').textContent = data.length.toLocaleString('vi-VN');
+  document.getElementById('sVPB').textContent   = vpb.toLocaleString('vi-VN');
+  document.getElementById('sMN').textContent    = mn.toLocaleString('vi-VN');
+  document.getElementById('sMB').textContent    = mb.toLocaleString('vi-VN');
+  document.getElementById('sStore').textContent = stores.toLocaleString('vi-VN');
 
-  // Title
   const parts = [];
   if (sale) parts.push(sale.toUpperCase());
-  if (month) parts.push(`Tháng ${month}`);
+  if (month) parts.push(`T${month}`);
   if (year) parts.push(year);
-  document.getElementById('summaryTitle').textContent = parts.length ? parts.join(' – ') : 'Tất cả';
-  document.getElementById('badgeSale').textContent = `${data.length} máy`;
+  document.getElementById('summaryTitle').textContent = parts.join(' · ') || 'Tất cả';
+  document.getElementById('badgeCount').textContent = data.length.toLocaleString('vi-VN') + ' máy';
+  sum.style.display = 'block';
 
-  summaryEl.style.display = 'block';
-
-  // Table
-  document.getElementById('recordCount').textContent = `${data.length} bản ghi`;
-  const tbody = document.getElementById('tableBody');
-  tbody.innerHTML = data.map((r, i) => `
-    <tr>
-      <td class="stt-cell">${i + 1}</td>
-      <td class="stt-cell">${r.stt}</td>
+  document.getElementById('recCount').textContent = data.length.toLocaleString('vi-VN') + ' bản ghi';
+  document.getElementById('tbody').innerHTML = data.map((r, i) => {
+    const chClass = r.ch.includes('Nam') ? 'ch-mn' : r.ch.includes('Bắc') ? 'ch-mb' : 'ch-mt';
+    return `<tr>
+      <td class="muted">${i+1}</td>
+      <td class="muted">${r.stt}</td>
       <td>${r.team}</td>
       <td>${r.time}</td>
-      <td><span class="channel-badge ${r.channel.includes('Nam') ? 'ch-mn' : r.channel.includes('Bắc') ? 'ch-mb' : 'ch-mt'}">${r.channel}</span></td>
-      <td style="font-weight:600">${r.salesman}</td>
+      <td><span class="ch ${chClass}">${r.ch}</span></td>
+      <td class="sale-name">${r.sale}</td>
       <td>${r.sdt}</td>
-      <td style="font-weight:500;color:var(--brand)">${r.store}</td>
+      <td class="store-id" style="color:var(--brand)">${r.store}</td>
       <td>${r.dong}</td>
-      <td class="serial-cell">${r.serial_box}</td>
-      <td class="serial-cell">${r.serial_sim}</td>
-      <td>${r.ngay_kt}</td>
-      <td><span class="loai-vpb">${r.loai}</span></td>
-    </tr>
-  `).join('');
-  detailEl.style.display = 'block';
+      <td class="mono">${r.sbox}</td>
+      <td class="mono">${r.ssim}</td>
+      <td>${r.nkt}</td>
+      <td><span class="loai">${r.loai}</span></td>
+    </tr>`;
+  }).join('');
+  det.style.display = 'block';
 }
 
 // ── HELPERS ──
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncText');
+  dot.className = 'dot' + (state === 'loading' ? ' loading' : state === 'error' ? ' error' : '');
+  txt.textContent = text;
+}
 function setLoading(on, text) {
   const bar = document.getElementById('loadingBar');
   bar.style.display = on ? 'flex' : 'none';
@@ -817,8 +542,11 @@ function showError(msg) {
   const el = document.getElementById('errorMsg');
   el.textContent = '⚠️ ' + msg;
   el.style.display = 'block';
-  setTimeout(() => el.style.display = 'none', 8000);
 }
+function hideError() { document.getElementById('errorMsg').style.display = 'none'; }
+
+// Enter key search
+document.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
 </script>
 </body>
 </html>
